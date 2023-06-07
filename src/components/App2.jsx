@@ -5,6 +5,7 @@ import Fab from '@mui/material/Fab';
 import Zoom from '@mui/material/Zoom';
 import axios from "axios";
 
+axios.defaults.headers.common['Authorization'] = `Bearer {token}`;
 
 
 function InsertNotes(){
@@ -14,7 +15,7 @@ function InsertNotes(){
   const[error, setError]=useState("");
 
   const Posted= async(processing)=>{
-    await axios.get(process.env.REACT_APP_SERVER_URL+"/events", {withCredentials:true}, {Authorization: `{TOKEN}`})
+    await axios.get(process.env.REACT_APP_SERVER_URL+"/events", {withCredentials:true})
   .then(res=>{
     if(processing){
       setDisplayedNotes([...res.data]);
@@ -39,7 +40,7 @@ function InsertNotes(){
         title: note.title,
         date: note.date,
       };
-      await axios.post(process.env.REACT_APP_SERVER_URL+"/toPostEvent", postingData, {withCredentials:true}, {Authorization: `{TOKEN}`} )
+      await axios.post(process.env.REACT_APP_SERVER_URL+"/toPostEvent", postingData, {withCredentials:true} )
        .then(res =>setError(<p>{res.data}</p>))
       }
       else {
@@ -82,7 +83,7 @@ function InsertNotes(){
     const reported={
       id:id,
     }
-    await axios.post(process.env.REACT_APP_SERVER_URL+"/deleteEvent", reported, {withCredentials:true}, {Authorization: `{TOKEN}`} )
+    await axios.post(process.env.REACT_APP_SERVER_URL+"/deleteEvent", reported, {withCredentials:true})
         .then(res =>setError(<p>{res.data}</p>))
         let processing = true
         Posted(processing)

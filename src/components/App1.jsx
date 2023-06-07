@@ -1,12 +1,14 @@
 import React, { useState, useEffect }from "react";
 import axios from "axios";
 
+axios.defaults.headers.common['Authorization'] = `Bearer {token}`;
+
 export default function App(){
 let [item, setItem]= useState({content:"", clicked:false});
 const [realItem, setRealItem]= useState([]);
 let [error, setError]= useState("");
 const Posted= async(processing)=>{
-  await axios.get(process.env.REACT_APP_SERVER_URL+"/items", {withCredentials:true}, {Authorization: `{TOKEN}`})
+  await axios.get(process.env.REACT_APP_SERVER_URL+"/items", {withCredentials:true})
 .then(res=>{
   if(processing){
     setRealItem(()=>[...res.data]);
@@ -25,7 +27,7 @@ useEffect( () => {
 },[])
 
 const Clean= async() =>{
-  await axios.get(process.env.REACT_APP_SERVER_URL+"/delete", {withCredentials:true}, {Authorization: `{TOKEN}`})
+  await axios.get(process.env.REACT_APP_SERVER_URL+"/delete", {withCredentials:true})
 .then(res=>{
     setError("");
     setRealItem(()=>[...res.data]);
@@ -44,7 +46,7 @@ const PostData= async()=>{
       content: item.content,
       clicked: item.clicked
     };
-    await axios.post(process.env.REACT_APP_SERVER_URL+"/toPost", postingData, {withCredentials:true}, {Authorization: `{TOKEN}`} )
+    await axios.post(process.env.REACT_APP_SERVER_URL+"/toPost", postingData, {withCredentials:true})
      .then(res =>setError(<p>{res.data}</p>))
     }
     else {
@@ -84,7 +86,7 @@ const PostData= async()=>{
         const reported={
           id:id,
         }
-        await axios.post(process.env.REACT_APP_SERVER_URL+"/toMark", reported, {withCredentials:true}, {Authorization: `{TOKEN}`} )
+        await axios.post(process.env.REACT_APP_SERVER_URL+"/toMark", reported, {withCredentials:true})
         .then(res =>setError(<p>{res.data}</p>))
         let processing = true
         Posted(processing)

@@ -4,6 +4,8 @@ import Zoom from "@mui/material/Zoom";
 import axios from "axios";
 import { useSignIn, useIsAuthenticated, useSignOut } from "react-auth-kit";
 
+axios.defaults.headers.common['Authorization'] = `Bearer {token}`;
+
 let day= new Date();
 let hourOfDay= day.getHours() ;
 let coloring= list.color(hourOfDay);
