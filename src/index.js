@@ -7,14 +7,14 @@ import { BrowserRouter } from "react-router-dom";
 
 const domNode = document.getElementById("root");
 const root = ReactDOM.createRoot(domNode);
-
+  
 root.render(
 <React.StrictMode>
   <AuthProvider
           authType={"cookie"}
           authName={"_auth"}
-          cookieDomain={window.location.hostname}
-          cookieSecure={true}
+          cookieDomain="https://keep-it-all-dude-myfriend.onrender.com"
+          cookieSecure={window.location.protocol === "https:"} 
         >  
     <BrowserRouter>
       <Router/>

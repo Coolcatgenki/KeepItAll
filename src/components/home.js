@@ -2,15 +2,14 @@ import React, {useState} from "react";
 import * as list from "../functions/RelojPro";
 import Zoom from "@mui/material/Zoom";
 import axios from "axios";
-import { useSignIn, useIsAuthenticated, useAuthUser, useSignOut } from "react-auth-kit";
-import { useNavigate } from "react-router-dom";
+import { useSignIn, useIsAuthenticated, useSignOut } from "react-auth-kit";
 
 let day= new Date();
 let hourOfDay= day.getHours() ;
 let coloring= list.color(hourOfDay);
 
 
-//axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true;
 
 function Log(props){
   return(
@@ -77,7 +76,7 @@ const signIn= useSignIn();
 const singOut= useSignOut();
 
 const logOut= async()=>{
-  await axios.get(process.env.REACT_APP_SERVER_URI+"/logout", {withCredentials:true} )
+  await axios.get(process.env.REACT_APP_SERVER_URL+"/logout", {withCredentials:true} )
 .then(response=>{
   setOutError(response.data);
 })
@@ -91,7 +90,7 @@ const RegPost= async()=>{
   else{
     if(regForm.password===regForm.confirmPassword){
       const registerData= regForm;
-      await axios.post(process.env.REACT_APP_SERVER_URI+"/register", registerData, {withCredentials:true})
+      await axios.post(process.env.REACT_APP_SERVER_URL+"/register", registerData, {withCredentials:true})
       .then(res=>{
         if(res.data){
           setFormError(<p>{res.data.message}</p>)
@@ -108,7 +107,7 @@ const RegPost= async()=>{
 const LogPost= async()=>{
       const registerData= logForm;
        try{
-        const res= await axios.post(process.env.REACT_APP_SERVER_URI+"/login", registerData, {withCredentials:true})
+        const res= await axios.post(process.env.REACT_APP_SERVER_URL+"/login", registerData, {withCredentials:true})
         setZoomToInit(false);
         setZoomLogOut(true);
         setFormError(<p>{res.data.message}</p>);
@@ -117,7 +116,7 @@ const LogPost= async()=>{
             token: res.data.token,
             expiresIn: 3600,
             tokenType: "Bearer",
-            authState: {username: registerData.username}
+            authState: {username: registerData.username},
           });
         } catch(err){
           if (((logForm.password).replace(/\s+/g, "")==="") || (logForm.username).replace(/\s+/g, "")===""){

@@ -14,7 +14,7 @@ function InsertNotes(){
   const[error, setError]=useState("");
 
   const Posted= async(processing)=>{
-    await axios.get(process.env.REACT_APP_SERVER_URI+"/events", {withCredentials:true})
+    await axios.get(process.env.REACT_APP_SERVER_URL+"/events", {withCredentials:true})
   .then(res=>{
     if(processing){
       setDisplayedNotes([...res.data]);
@@ -39,7 +39,7 @@ function InsertNotes(){
         title: note.title,
         date: note.date,
       };
-      await axios.post(process.env.REACT_APP_SERVER_URI+"/toPostEvent", postingData, {withCredentials:true} )
+      await axios.post(process.env.REACT_APP_SERVER_URL+"/toPostEvent", postingData, {withCredentials:true} )
        .then(res =>setError(<p>{res.data}</p>))
       }
       else {
@@ -82,7 +82,7 @@ function InsertNotes(){
     const reported={
       id:id,
     }
-    await axios.post(process.env.REACT_APP_SERVER_URI+"/deleteEvent", reported, {withCredentials:true} )
+    await axios.post(process.env.REACT_APP_SERVER_URL+"/deleteEvent", reported, {withCredentials:true} )
         .then(res =>setError(<p>{res.data}</p>))
         let processing = true
         Posted(processing)
