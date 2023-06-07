@@ -14,7 +14,7 @@ function InsertNotes(){
   const[error, setError]=useState("");
 
   const Posted= async(processing)=>{
-    await axios.get(process.env.REACT_APP_SERVER_URL+"/events", {withCredentials:true})
+    await axios.get(process.env.REACT_APP_SERVER_URL+"/events", {withCredentials:true}, {Authorization: `Bearer {TOKEN}`})
   .then(res=>{
     if(processing){
       setDisplayedNotes([...res.data]);
@@ -39,7 +39,7 @@ function InsertNotes(){
         title: note.title,
         date: note.date,
       };
-      await axios.post(process.env.REACT_APP_SERVER_URL+"/toPostEvent", postingData, {withCredentials:true} )
+      await axios.post(process.env.REACT_APP_SERVER_URL+"/toPostEvent", postingData, {withCredentials:true}, {Authorization: `Bearer {TOKEN}`} )
        .then(res =>setError(<p>{res.data}</p>))
       }
       else {
@@ -82,7 +82,7 @@ function InsertNotes(){
     const reported={
       id:id,
     }
-    await axios.post(process.env.REACT_APP_SERVER_URL+"/deleteEvent", reported, {withCredentials:true} )
+    await axios.post(process.env.REACT_APP_SERVER_URL+"/deleteEvent", reported, {withCredentials:true}, {Authorization: `Bearer {TOKEN}`} )
         .then(res =>setError(<p>{res.data}</p>))
         let processing = true
         Posted(processing)
@@ -105,7 +105,7 @@ return(
         <Fab onClick={display} id="butt"><Icon baseClassName="fas" className="fa-plus-circle">+</Icon></Fab>
       </div>
       </Zoom>
-      <p>{error}</p>
+      {error}
       </form>
       <div className="noteWrapper">
         {displayedNotes.map((note,id)=>{
