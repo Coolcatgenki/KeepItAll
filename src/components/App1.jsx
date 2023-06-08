@@ -1,14 +1,17 @@
 import React, { useState, useEffect }from "react";
 import axios from "axios";
+import {useAuthHeader} from 'react-auth-kit'
 
-axios.defaults.headers.common['Authorization'] = `Bearer {token}`;
 
 export default function App(){
+  const x= useAuthHeader();
+  console.log(x());
+
 let [item, setItem]= useState({content:"", clicked:false});
 const [realItem, setRealItem]= useState([]);
 let [error, setError]= useState("");
 const Posted= async(processing)=>{
-  await axios.get(process.env.REACT_APP_SERVER_URL+"/items", {withCredentials:true})
+  await axios.get(process.env.REACT_APP_SERVER_URL+"/items", {headers: {"Authorization": `${x()}`}}, {withCredentials:true})
 .then(res=>{
   if(processing){
     setRealItem(()=>[...res.data]);
@@ -27,7 +30,7 @@ useEffect( () => {
 },[])
 
 const Clean= async() =>{
-  await axios.get(process.env.REACT_APP_SERVER_URL+"/delete", {withCredentials:true})
+  await axios.get(process.env.REACT_APP_SERVER_URL+"/delete",  {headers: {"Authorization": `${x()}`}}, {withCredentials:true})
 .then(res=>{
     setError("");
     setRealItem(()=>[...res.data]);
@@ -46,8 +49,8 @@ const PostData= async()=>{
       content: item.content,
       clicked: item.clicked
     };
-    await axios.post(process.env.REACT_APP_SERVER_URL+"/toPost", postingData, {withCredentials:true})
-     .then(res =>setError(<p>{res.data}</p>))
+    await axios.post(process.env.REACT_APP_SERVER_URL+"/toPost", postingData,  {headers: {"Authorization": `${x()}`}}, {withCredentials:true})
+     .then(res =>setError(res.data))
     }
     else {
       setError(<p>There is no content on the textfield</p>)
@@ -86,8 +89,8 @@ const PostData= async()=>{
         const reported={
           id:id,
         }
-        await axios.post(process.env.REACT_APP_SERVER_URL+"/toMark", reported, {withCredentials:true})
-        .then(res =>setError(<p>{res.data}</p>))
+        await axios.post(process.env.REACT_APP_SERVER_URL+"/toMark", reported,  {headers: {"Authorization": `${x()}`}}, {withCredentials:true})
+        .then(res =>setError(res.data))
         let processing = true
         Posted(processing)
         return () => {

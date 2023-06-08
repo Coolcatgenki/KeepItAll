@@ -4,18 +4,21 @@ import Icon from '@mui/material/Icon';
 import Fab from '@mui/material/Fab';
 import Zoom from '@mui/material/Zoom';
 import axios from "axios";
+import {useAuthHeader} from 'react-auth-kit'
 
-axios.defaults.headers.common['Authorization'] = `Bearer {token}`;
 
 
 function InsertNotes(){
+  const x= useAuthHeader();
+  console.log(x())
+
   const[note, setNote]=useState({title:"", content:"", date:"2023-01-01"});
   const[displayedNotes, setDisplayedNotes]= useState([]);
   const[zoom, setZoom]= useState(false);
   const[error, setError]=useState("");
 
   const Posted= async(processing)=>{
-    await axios.get(process.env.REACT_APP_SERVER_URL+"/events", {withCredentials:true})
+    await axios.get(process.env.REACT_APP_SERVER_URL+"/events", {headers: {"Authorization": `${x()}`}}, {withCredentials:true})
   .then(res=>{
     if(processing){
       setDisplayedNotes([...res.data]);
@@ -40,7 +43,7 @@ function InsertNotes(){
         title: note.title,
         date: note.date,
       };
-      await axios.post(process.env.REACT_APP_SERVER_URL+"/toPostEvent", postingData, {withCredentials:true} )
+      await axios.post(process.env.REACT_APP_SERVER_URL+"/toPostEvent", postingData, {headers: {"Authorization": `${x()}`}}, {withCredentials:true})
        .then(res =>setError(<p>{res.data}</p>))
       }
       else {
@@ -83,7 +86,7 @@ function InsertNotes(){
     const reported={
       id:id,
     }
-    await axios.post(process.env.REACT_APP_SERVER_URL+"/deleteEvent", reported, {withCredentials:true})
+    await axios.post(process.env.REACT_APP_SERVER_URL+"/deleteEvent", reported, {headers: {"Authorization": `${x()}`}}, {withCredentials:true})
         .then(res =>setError(<p>{res.data}</p>))
         let processing = true
         Posted(processing)

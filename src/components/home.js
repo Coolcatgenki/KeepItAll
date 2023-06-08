@@ -4,7 +4,7 @@ import Zoom from "@mui/material/Zoom";
 import axios from "axios";
 import { useSignIn, useIsAuthenticated, useSignOut } from "react-auth-kit";
 
-axios.defaults.headers.common['Authorization'] = `Bearer {token}`;
+axios.defaults.headers.common['Authorization'] = `Bearer {_auth}`;
 
 let day= new Date();
 let hourOfDay= day.getHours() ;
@@ -33,7 +33,7 @@ function Reg(props){
       <input className="log-reg-inputs" name="username" onChange={props.onChange} placeholder="Username"/>
       <input type="password" className="log-reg-inputs" name="password" onChange={props.onChange} placeholder="Password"/>
       <input type="password" className="log-reg-inputs" name="confirmPassword" onChange={props.onChange} placeholder="Confirm Password"/>
-      {props.error}
+      <p>{props.error}</p>
       <button className= "log-reg-buttons" onClick={props.registerData}>Register</button>
     </div>
   )
@@ -92,19 +92,15 @@ const RegPost= async()=>{
   else{
     if(regForm.password===regForm.confirmPassword){
       const registerData= regForm;
-      await axios.post(process.env.REACT_APP_SERVER_URL+"/register", registerData, {withCredentials:true})
-      .then(res=>{
-        if(res.data){
-          setFormError(<p>{res.data.message}</p>)
-        }
-      })
-    }
+      const res = await axios.post(process.env.REACT_APP_SERVER_URL+"/register", registerData, {withCredentials:true});
+      if(res.data){
+      setFormError(res.data);
+      }
+      }
     else{
-      setFormError(<p>The passwords dont match!</p>)
+      setFormError("The passwords dont match!")
     }
-  }
-
-}
+}}
 
 const LogPost= async()=>{
       const registerData= logForm;
