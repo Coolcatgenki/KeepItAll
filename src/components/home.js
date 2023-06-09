@@ -106,6 +106,7 @@ const LogPost= async()=>{
       const registerData= logForm;
        try{
         const res= await axios.post(process.env.REACT_APP_SERVER_URL+"/login", registerData, {withCredentials:true})
+        if(res.data.message==="Succesfully Loged!"){
         setZoomToInit(false);
         setZoomLogOut(true);
         setFormError(<p>{res.data.message}</p>);
@@ -116,15 +117,18 @@ const LogPost= async()=>{
             tokenType: "Bearer",
             authState: {username: registerData.username},
           });
-        } catch(err){
-          if (((logForm.password).replace(/\s+/g, "")==="") || (logForm.username).replace(/\s+/g, "")===""){
+        }
+        else if(res.data.message==="Failed"){
+            if (((logForm.password).replace(/\s+/g, "")==="") || (logForm.username).replace(/\s+/g, "")===""){
             setFormError(<p>One or all fields are empty</p>);
-          }
-          else{
-          setFormError(<p>The information its not correct!</p>);
-           }
+            }
+            else{
+            setFormError(<p>The information its not correct!</p>);
+            }
         }
       }
+      finally{}
+    }
 
 
 let c=`The current time is: ${list.FullTime()}`; 
