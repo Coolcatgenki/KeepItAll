@@ -34,6 +34,7 @@ const Clean= async() =>{
 .then(res=>{
     setError("");
     setRealItem(()=>[...res.data]);
+    setError("You deleted all the notes successfully")
     let processing = true
     Posted(processing)
     return () => {
@@ -45,12 +46,14 @@ const Clean= async() =>{
 
 const PostData= async()=>{
   if(item.content.replace(/\s+/g, "")!==""){
+    setError("Sending note...");
     const postingData={
       content: item.content,
       clicked: item.clicked
     };
     await axios.post(process.env.REACT_APP_SERVER_URL+"/toPost", postingData,  {headers: {"Authorization": `${x()}`}}, {withCredentials:true})
      .then(res =>setError(res.data))
+     .catch(err =>setError("Error!"))
     }
     else {
       setError(<p>There is no content on the textfield</p>)

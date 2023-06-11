@@ -4,20 +4,15 @@ import Zoom from "@mui/material/Zoom";
 import axios from "axios";
 import { useSignIn, useIsAuthenticated, useSignOut } from "react-auth-kit";
 
-axios.defaults.headers.common['Authorization'] = `Bearer {_auth}`;
-
 let day= new Date();
 let hourOfDay= day.getHours() ;
 let coloring= list.color(hourOfDay);
-
-
-axios.defaults.withCredentials = true;
 
 function Log(props){
   return(
     <div className="log">
       <button onClick={props.back} id="buttonBack">Go Back</button>
-      <input type="email" className="log-reg-inputs" name="username" onChange={props.onChange} placeholder="Username"/>
+      <input className="log-reg-inputs" name="username" onChange={props.onChange} placeholder="Username"/>
       <input type="password" className="log-reg-inputs" name="password" onChange={props.onChange} placeholder="Password"/>
       {props.error}
       <button className= "log-reg-buttons" onClick={props.logData}>Log In</button>
@@ -27,7 +22,7 @@ function Log(props){
 
 function Reg(props){
   return(
-    <div className="log-reg">
+    <div className="reg">
       <button onClick={props.back} id="buttonBack">Go Back</button>
       <input type="email" className="log-reg-inputs" name="email" onChange={props.onChange} placeholder="Email"/>
       <input className="log-reg-inputs" name="username" onChange={props.onChange} placeholder="Username"/>
@@ -75,7 +70,7 @@ const [formError, setFormError]= useState("");
 const [OutError, setOutError]= useState("");
 
 const signIn= useSignIn();
-const singOut= useSignOut();
+const signOut= useSignOut();
 
 const logOut= async()=>{
   await axios.get(process.env.REACT_APP_SERVER_URL+"/logout", {withCredentials:true} )
@@ -100,10 +95,12 @@ const RegPost= async()=>{
     else{
       setFormError("The passwords dont match!")
     }
-}}
+  }
+}
 
 const LogPost= async()=>{
       const registerData= logForm;
+      setFormError(<p>Login in process, please wait</p>);
        try{
         const res= await axios.post(process.env.REACT_APP_SERVER_URL+"/login", registerData, {withCredentials:true})
         if(res.data.message==="Succesfully Loged!"){
@@ -119,7 +116,7 @@ const LogPost= async()=>{
           });
         }
         else if(res.data.message==="Failed"){
-            if (((logForm.password).replace(/\s+/g, "")==="") || (logForm.username).replace(/\s+/g, "")===""){
+            if (((registerData.password).replace(/\s+/g, "")==="") || (registerData.username).replace(/\s+/g, "")===""){
             setFormError(<p>One or all fields are empty</p>);
             }
             else{
@@ -166,13 +163,15 @@ const clickBack= ()=>{
   setLog_Reg("");
   setZoomLogReg(false);
   setZoomHome(true);
+  if(formError!==<p>Login in process, please wait</p>){
   setFormError("");
+}
   setOutError("");
 }
 
 const SingOut = ()=>{
   logOut()
-  singOut()
+  signOut()
   setZoomLogOut(false);
   setZoomToInit(true);
 }
@@ -208,9 +207,9 @@ return(
 </h1>
 <h1>{time}</h1>
 <Zoom in={zoomLogOut}>
-<button onClick={SingOut}>Sing Out</button>
+<button className="LogOut" onClick={SingOut}>Sing Out</button>
 </Zoom>
-<p>{OutError}</p>
+<p className="logOuted">{OutError}</p>
 </div>
 </div> 
 )

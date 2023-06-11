@@ -38,6 +38,7 @@ function InsertNotes(){
 
   const PostData= async()=>{
     if(((note.content).replace(/\s+/g, "")!=="")&& (note.title).replace(/\s+/g, "")!==""){
+      setError(<p>Sending reminder...</p>)
       const postingData={
         content: note.content,
         title: note.title,
@@ -45,6 +46,7 @@ function InsertNotes(){
       };
       await axios.post(process.env.REACT_APP_SERVER_URL+"/toPostEvent", postingData, {headers: {"Authorization": `${x()}`}}, {withCredentials:true})
        .then(res =>setError(<p>{res.data}</p>))
+       .catch(err=> setError(<p>Error with the sending process!</p>))
       }
       else {
         setError(<p>There is no content on the textfield</p>)
@@ -72,7 +74,8 @@ function InsertNotes(){
   }
 
   function Note(props){
-    return(<div className="noteD">
+    return(
+    <div className="noteD">
         <div className="INTI">
         <h1>{props.title}</h1>
         </div>
