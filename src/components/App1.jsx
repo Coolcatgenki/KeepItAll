@@ -113,7 +113,7 @@ return(
       </ul>
       <p className="list-info">{error}</p>
     <button className="button-list-add" >Add note</button>
-    <a className="button-list-clean" onClick={Clean}>Clean All</a>
+    <a className="button-list-clean" onClick={Clean}>Clear All</a>
     </form>
     </>
 )

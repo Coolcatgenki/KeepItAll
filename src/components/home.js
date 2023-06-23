@@ -11,7 +11,9 @@ let coloring= list.color(hourOfDay);
 function Log(props){
   return(
     <div className="log">
+      <Zoom in={props.zoomBack}>
       <button onClick={props.back} id="buttonBack">Go Back</button>
+      </Zoom>
       <input className="log-reg-inputs" name="username" onChange={props.onChange} placeholder="Username"/>
       <input type="password" className="log-reg-inputs" name="password" onChange={props.onChange} placeholder="Password"/>
       {props.error}
@@ -23,7 +25,9 @@ function Log(props){
 function Reg(props){
   return(
     <div className="reg">
+      <Zoom in={props.zoomBack}>
       <button onClick={props.back} id="buttonBack">Go Back</button>
+      </Zoom>
       <input type="email" className="log-reg-inputs" name="email" onChange={props.onChange} placeholder="Email"/>
       <input className="log-reg-inputs" name="username" onChange={props.onChange} placeholder="Username"/>
       <input type="password" className="log-reg-inputs" name="password" onChange={props.onChange} placeholder="Password"/>
@@ -39,13 +43,13 @@ function Reg(props){
 function LogReg(props){
   if(props.x==="log"){
    return(
-    <Log back={props.back} onChange={props.logChange} error={props.error} logData={props.logData}/>
+    <Log back={props.back} onChange={props.logChange} error={props.error} logData={props.logData} zoomBack={props.zoomBack}/>
    )
 
   }
   else if(props.x==="reg"){
     return(
-    <Reg back={props.back} onChange={props.regChange} error={props.error} registerData={props.registerData}/> 
+    <Reg back={props.back} onChange={props.regChange} error={props.error} registerData={props.registerData} zoomBack={props.zoomBack}/> 
     )
    }
  }
@@ -58,6 +62,7 @@ const authenticate= useIsAuthenticated();
 const [zoomToInit, setZoomToInit]= useState(!authenticate());
 const [zoomLogReg, setZoomLogReg]= useState(false);
 const [zoomHome, setZoomHome]= useState(true);
+const [zoomBack, setZoomBack]= useState(true);
 const [zoomLogOut, setZoomLogOut]= useState(authenticate());
 const [logReg, setLog_Reg]= useState("");
 const [regForm, setRegForm]= useState({
@@ -87,9 +92,25 @@ const RegPost= async()=>{
   else{
     if(regForm.password===regForm.confirmPassword){
       const registerData= regForm;
+      setFormError("Processing registered information...");
+      setZoomBack(false);
       const res = await axios.post(process.env.REACT_APP_SERVER_URL+"/register", registerData, {withCredentials:true});
-      if(res.data){
-      setFormError(res.data);
+      if(res.data.message==="Succesfully Registered!"){
+        setZoomToInit(false);
+        setZoomLogOut(true);
+        setZoomBack(true);
+      setFormError(res.data.message);
+      signIn({
+        token: res.data.token,
+        expiresIn: 3600,
+        tokenType: "Bearer",
+        authState: {username: registerData.username},
+      });
+      clickBack();
+      }
+      else{
+      setFormError(res.data.message);
+      setZoomBack(true);
       }
       }
     else{
@@ -101,11 +122,13 @@ const RegPost= async()=>{
 const LogPost= async()=>{
       const registerData= logForm;
       setFormError(<p>Login in process, please wait</p>);
+      setZoomBack(false);
        try{
         const res= await axios.post(process.env.REACT_APP_SERVER_URL+"/login", registerData, {withCredentials:true})
         if(res.data.message==="Succesfully Loged!"){
         setZoomToInit(false);
         setZoomLogOut(true);
+        setZoomBack(true);
         setFormError(<p>{res.data.message}</p>);
         clickBack();
           signIn({
@@ -116,6 +139,7 @@ const LogPost= async()=>{
           });
         }
         else if(res.data.message==="Failed"){
+            setZoomBack(true);
             if (((registerData.password).replace(/\s+/g, "")==="") || (registerData.username).replace(/\s+/g, "")===""){
             setFormError(<p>One or all fields are empty</p>);
             }
@@ -181,7 +205,7 @@ return(
 <div className="wrap1">
 <Zoom in={zoomLogReg}>
   <div className="log-reg">
-   <LogReg logData={LogPost} back={clickBack} logChange={logRChange} regChange={regRchange} x={logReg} error={formError} registerData={RegPost}/>
+   <LogReg logData={LogPost} back={clickBack} zoomBack={zoomBack} logChange={logRChange} regChange={regRchange} x={logReg} error={formError} registerData={RegPost}/>
   </div>
 </Zoom>  
 <Zoom in={zoomHome}>
